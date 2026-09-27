@@ -1,0 +1,11 @@
+{
+  "siteName": "アニメ見放題ナビ",
+  "tagline": "アニメ好きのための動画配信サービスの選び方",
+  "siteUrl": "https://example.com",
+  "operatorName": "nano send",
+  "contactEmail": "",
+  "contactFormUrl": "",
+  "affiliateLinks": {
+    "DMM TV": ""
+  }
+}
