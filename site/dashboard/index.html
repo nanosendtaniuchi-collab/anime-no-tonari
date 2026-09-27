@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="運営ボード">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<title>運営ボード｜アニメのとなり</title>
+<style>
+  :root {
+    --bg: #fdf6e9; --surface: #ffffff; --text: #2b2d42; --muted: #7d7f8f; --line: #ece4d3;
+    --mint: #a8e0cf; --mint-deep: #3fae8c; --purple: #8b6cf6; --yellow: #ffd84d; --coral: #e8542e; --shadow: #eadfca;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #16171c; --surface: #20222a; --text: #eceef3; --muted: #a0a3b1; --line: #2f323c; --mint: #1f4f44; --shadow: #0d0e12; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif; font-size: 15px; line-height: 1.6; padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; text-align: left; }
+  a { color: var(--purple); }
+
+  header { background: var(--mint); padding: calc(18px + env(safe-area-inset-top)) 16px 18px; border-bottom: 4px solid var(--mint-deep); }
+  .brand { font-size: 12px; font-weight: 800; opacity: .75; }
+  header h1 { font-size: 22px; font-weight: 900; margin-top: 2px; }
+  .updated { font-size: 11px; opacity: .7; margin-top: 2px; }
+
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  .view { display: none; }
+  .view.active { display: block; }
+  h2 { font-size: 13px; font-weight: 800; display: inline-block; background: var(--text); color: var(--bg); padding: 3px 12px; border-radius: 8px; margin: 18px 0 10px; }
+  .card { background: var(--surface); border-radius: 14px; box-shadow: 0 3px 0 var(--shadow); padding: 14px; }
+
+  .progress { display: flex; align-items: center; gap: 16px; }
+  .ring { --p: 0; width: 88px; height: 88px; flex: none; border-radius: 50%; background: conic-gradient(var(--mint-deep) calc(var(--p) * 1%), var(--line) 0); display: grid; place-items: center; }
+  .ring span { width: 68px; height: 68px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; font-weight: 900; font-size: 20px; }
+  .progress p { font-size: 13px; color: var(--muted); }
+  .progress b { font-size: 16px; color: var(--text); display: block; }
+
+  .next { margin-top: 12px; background: #fff1ec; border: 2px solid #f0a58c; border-radius: 14px; padding: 12px 14px; color: #2b2d42; }
+  .next small { font-size: 11px; font-weight: 800; color: var(--coral); }
+  .next b { display: block; font-size: 16px; margin-top: 2px; }
+  .next p { font-size: 12px; margin-top: 2px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stat { text-align: center; padding: 12px 6px; }
+  .stat b { display: block; font-size: 22px; font-weight: 900; }
+  .stat span { font-size: 11px; color: var(--muted); }
+
+  .list { padding: 4px 14px; }
+  .item { width: 100%; display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+  .item:last-child { border: 0; }
+  .dot { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 900; color: #fff; margin-top: 1px; }
+  .dot.done { background: var(--mint-deep); }
+  .dot.todo { background: var(--purple); }
+  .dot.wait { background: #c9a227; }
+  .item .body { flex: 1; min-width: 0; }
+  .item .t { font-weight: 700; font-size: 14px; }
+  .item.done .t { color: var(--muted); text-decoration: line-through; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 800; padding: 0 7px; border-radius: 6px; margin-left: 6px; vertical-align: 2px; }
+  .tag.you { background: #ffe9e2; color: var(--coral); }
+  .tag.ai { background: #efe9ff; color: var(--purple); }
+  .item .d { display: none; font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .item.open .d { display: block; }
+  .chev { flex: none; color: var(--muted); font-size: 12px; margin-top: 3px; transition: transform .2s; }
+  .item.open .chev { transform: rotate(90deg); }
+
+  .team { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .boss { grid-column: span 2; display: flex; gap: 12px; align-items: center; background: #fff7d6; color: #2b2d42; }
+  .member { text-align: center; padding: 14px 8px 12px; }
+  .member .icon, .boss .icon { width: 48px; height: 48px; border-radius: 14px; margin: 0 auto 6px; display: grid; place-items: center; font-size: 26px; }
+  .boss .icon { margin: 0; background: var(--yellow); flex: none; }
+  .member h3 { font-size: 15px; font-weight: 900; }
+  .en { font-size: 8px; letter-spacing: 1.5px; color: var(--muted); }
+  .member p { font-size: 11.5px; font-weight: 700; border-top: 1px dashed var(--line); margin-top: 6px; padding-top: 6px; }
+  .tap { font-size: 10px; color: var(--purple); margin-top: 4px; }
+
+  .flow { display: flex; gap: 4px; overflow-x: auto; padding-bottom: 2px; }
+  .step { flex: 1 0 84px; border: 1.5px dashed var(--line); border-radius: 10px; padding: 8px 6px; text-align: center; font-size: 11px; font-weight: 800; background: var(--surface); }
+  .step small { display: block; color: var(--mint-deep); font-size: 9px; letter-spacing: 1px; }
+  .step.you { border-color: #f0a58c; background: #fff1ec; color: #2b2d42; }
+
+  .article h3 { font-size: 15px; line-height: 1.5; }
+  .badge { display: inline-block; font-size: 10px; font-weight: 800; padding: 1px 8px; border-radius: 6px; color: #fff; background: #c0392b; margin-bottom: 6px; }
+  .badge.pub { background: var(--mint-deep); }
+  .meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .checks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+  .check { border-radius: 10px; padding: 8px 4px; text-align: center; font-size: 11px; background: var(--bg); }
+  .check b { display: block; font-size: 18px; }
+  .check.ng b { color: var(--coral); }
+  .check.ok b { color: var(--mint-deep); }
+  .links { margin-top: 10px; font-size: 12px; }
+  .links span { display: inline-block; margin: 3px 4px 0 0; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--line); }
+
+  .acc a { text-decoration: none; }
+  .open-link { font-size: 11px; font-weight: 800; }
+
+  nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 5; }
+  nav.tabs button { flex: 1; text-align: center; padding: 8px 0 7px; font-size: 10.5px; font-weight: 700; color: var(--muted); }
+  nav.tabs button i { display: block; font-style: normal; font-size: 20px; line-height: 1.3; filter: grayscale(1); opacity: .6; }
+  nav.tabs button.active { color: var(--text); }
+  nav.tabs button.active i { filter: none; opacity: 1; }
+
+  .sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: none; z-index: 10; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-radius: 20px 20px 0 0; padding: 10px 20px calc(24px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s; z-index: 11; max-width: 640px; margin: 0 auto; }
+  .sheet:not(.show) { visibility: hidden; transition: transform .25s, visibility 0s .25s; }
+  .sheet.show { transform: none; }
+  .sheet-bg.show { display: block; }
+  .grip { width: 40px; height: 5px; border-radius: 3px; background: var(--line); margin: 0 auto 14px; }
+  .sheet .icon { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; font-size: 30px; }
+  .sheet h3 { font-size: 20px; margin-top: 8px; }
+  .sheet p { margin-top: 8px; font-size: 14px; }
+  .ask { margin-top: 14px; background: var(--bg); border-radius: 12px; padding: 12px; font-size: 13px; }
+  .ask small { display: block; font-size: 11px; color: var(--muted); font-weight: 800; }
+  .close { margin-top: 16px; width: 100%; text-align: center; padding: 12px; border-radius: 12px; background: var(--text); color: var(--bg); font-weight: 800; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">▶ <span id="site-name"></span></div>
+  <h1>運営ボード</h1>
+  <div class="updated" id="updated"></div>
+</header>
+
+<main>
+  <section class="view active" id="v-home">
+    <div class="card progress">
+      <div class="ring" id="ring"><span id="pct"></span></div>
+      <p><b id="progress-text"></b>完了したタスクの割合です。下のリストを押すと、くわしい内容が見られます。</p>
+    </div>
+    <div class="next" id="next"></div>
+    <h2>📌 数字で見る</h2>
+    <div class="stats">
+      <div class="card stat"><b id="s-pub"></b><span>公開した記事</span></div>
+      <div class="card stat"><b id="s-draft"></b><span>下書き</span></div>
+      <div class="card stat"><b>6</b><span>AI社員</span></div>
+    </div>
+    <h2>📝 やることリスト</h2>
+    <div class="card list" id="tasks"></div>
+  </section>
+
+  <section class="view" id="v-team">
+    <h2>👥 チームメンバー</h2>
+    <div class="team" id="team"></div>
+    <h2>🔁 記事ができるまで</h2>
+    <div class="flow">
+      <div class="step"><small>STEP 1</small>キーワード<br>・案件調査</div>
+      <div class="step"><small>STEP 2</small>記事を<br>書く</div>
+      <div class="step"><small>STEP 3</small>SEOで<br>整える</div>
+      <div class="step"><small>STEP 4</small>法律<br>チェック</div>
+      <div class="step you"><small>STEP 5</small>あなたが<br>確認・公開</div>
+    </div>
+    <p class="hint">メンバーを押すと、担当の説明と頼み方の例が見られます。</p>
+  </section>
+
+  <section class="view" id="v-articles">
+    <h2>📰 記事</h2>
+    <div id="articles"></div>
+  </section>
+
+  <section class="view" id="v-accounts">
+    <h2>🔑 登録・連携</h2>
+    <div class="card list" id="accounts"></div>
+    <p class="hint">パスワードなどの個人情報はここには載せていません。</p>
+  </section>
+</main>
+
+<nav class="tabs">
+  <button class="active" data-view="home"><i>🏠</i>進み具合</button>
+  <button data-view="team"><i>👥</i>チーム</button>
+  <button data-view="articles"><i>📰</i>記事</button>
+  <button data-view="accounts"><i>🔑</i>登録</button>
+</nav>
+
+<div class="sheet-bg" id="sheet-bg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const mark = { done: "✓", todo: "", wait: "…" };
+
+  $("site-name").textContent = D.siteName;
+  $("updated").textContent = `最終更新：${D.updated}`;
+
+  // 進み具合
+  const done = D.tasks.filter((t) => t.status === "done").length;
+  const pct = Math.round((done / D.tasks.length) * 100);
+  $("ring").style.setProperty("--p", pct);
+  $("pct").textContent = pct + "%";
+  $("progress-text").textContent = `${D.tasks.length}個中 ${done}個 完了`;
+  const next = D.tasks.find((t) => t.status === "todo") || D.tasks.find((t) => t.status === "wait");
+  $("next").innerHTML = next
+    ? `<small>▶ 次にやること</small><b>${esc(next.title)}</b>${next.detail ? `<p>${esc(next.detail)}</p>` : ""}`
+    : `<small>🎉</small><b>すべて完了しました</b>`;
+  $("s-pub").textContent = D.articles.filter((a) => a.published).length;
+  $("s-draft").textContent = D.articles.filter((a) => !a.published).length;
+
+  $("tasks").innerHTML = D.tasks.map((t, i) => {
+    let n = 0; D.tasks.slice(0, i + 1).forEach((x) => { if (x.status !== "done") n++; });
+    const who = t.who ? `<span class="tag ${t.who === "あなた" ? "you" : "ai"}">${esc(t.who)}</span>` : "";
+    return `<button class="item ${t.status}"${t.detail ? ' data-toggle' : ""}>
+      <span class="dot ${t.status}">${t.status === "todo" ? n : mark[t.status]}</span>
+      <span class="body"><span class="t">${esc(t.title)}</span>${who}${t.detail ? `<span class="d">${esc(t.detail)}</span>` : ""}${t.status === "wait" ? '<span class="d" style="display:block">待ち</span>' : ""}</span>
+      ${t.detail ? '<span class="chev">▶</span>' : ""}
+    </button>`;
+  }).join("");
+  document.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => b.classList.toggle("open")));
+
+  // チーム
+  $("team").innerHTML = `<div class="card boss"><div class="icon">👑</div><div><h3>編集長（Claude）</h3><div class="en">DIRECTOR</div><div style="font-size:12px;font-weight:700">あなたの指示を受けて、6人に仕事を振り分け、結果をまとめて報告します</div></div></div>` +
+    D.members.map((m, i) => `<button class="card member" data-member="${i}"><div class="icon" style="background:${m.color}">${m.icon}</div><h3>${esc(m.name)}</h3><div class="en">${esc(m.en)}</div><p>${esc(m.job)}</p><div class="tap">くわしく見る ›</div></button>`).join("");
+
+  const sheet = $("sheet"), bg = $("sheet-bg");
+  const openSheet = (html) => { sheet.innerHTML = `<div class="grip"></div>${html}<button class="close" id="close">閉じる</button>`; sheet.classList.add("show"); bg.classList.add("show"); $("close").onclick = closeSheet; };
+  const closeSheet = () => { sheet.classList.remove("show"); bg.classList.remove("show"); };
+  bg.onclick = closeSheet;
+  document.querySelectorAll("[data-member]").forEach((b) => b.addEventListener("click", () => {
+    const m = D.members[b.dataset.member];
+    openSheet(`<div class="icon" style="background:${m.color}">${m.icon}</div><h3>${esc(m.name)}</h3><div class="en">${esc(m.en)}</div><p>${esc(m.detail)}</p><div class="ask"><small>こう頼めばOK</small>${esc(m.ask)}</div>`);
+  }));
+
+  // 記事（ファイルから自動集計）
+  $("articles").innerHTML = D.articles.length ? D.articles.map((a) => {
+    const unset = a.links.filter((l) => !l.ready).length;
+    return `<div class="card article" style="margin-bottom:10px">
+      <span class="badge ${a.published ? "pub" : ""}">${a.published ? "公開中" : "下書き"}</span>
+      <h3>${esc(a.title)}</h3>
+      <div class="meta">キーワード：${esc(a.keyword)}<br>約${a.chars.toLocaleString()}字 ・ 更新 ${esc(a.updated)}</div>
+      <div class="checks">
+        <div class="check ${a.needStory ? "ng" : "ok"}"><b>${a.needStory || "✓"}</b>体験談の空欄</div>
+        <div class="check ${a.needCheck ? "ng" : "ok"}"><b>${a.needCheck || "✓"}</b>要確認</div>
+        <div class="check ${unset ? "ng" : "ok"}"><b>${unset || "✓"}</b>リンク未設定</div>
+      </div>
+      <div class="links">広告リンク：${a.links.map((l) => `<span>${l.ready ? "✅" : "⬜"} ${esc(l.name)}</span>`).join("") || "なし"}</div>
+      ${a.url ? `<p style="margin-top:10px"><a class="open-link" href="${esc(a.url)}">記事を開く ›</a></p>` : ""}
+    </div>`;
+  }).join("") : `<div class="card">まだ記事がありません。</div>`;
+
+  // 登録・連携
+  $("accounts").innerHTML = D.accounts.map((a) => `<div class="item acc ${a.status === "done" ? "" : ""}">
+      <span class="dot ${a.status}">${mark[a.status] || "!"}</span>
+      <span class="body"><span class="t">${esc(a.name)}</span><span class="d" style="display:block">${esc(a.note)}</span>
+      ${a.url ? `<a class="open-link" href="${esc(a.url)}" target="_blank" rel="noopener">開く ›</a>` : ""}</span>
+    </div>`).join("");
+
+  // タブ
+  document.querySelectorAll("nav.tabs button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("nav.tabs button").forEach((x) => x.classList.toggle("active", x === b));
+    document.querySelectorAll(".view").forEach((v) => v.classList.toggle("active", v.id === "v-" + b.dataset.view));
+    try { localStorage.setItem("tab", b.dataset.view); } catch (e) {}
+    window.scrollTo(0, 0);
+  }));
+  try { const t = localStorage.getItem("tab"); if (t) document.querySelector(`nav.tabs [data-view="${t}"]`)?.click(); } catch (e) {}
+</script>
+</body>
+</html>

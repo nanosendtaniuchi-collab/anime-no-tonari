@@ -1,0 +1,31 @@
+{
+  "updated": "2026-09-27",
+  "accounts": [
+    { "name": "もしもアフィリエイト", "status": "done", "note": "会員登録済み", "url": "https://af.moshimo.com/" },
+    { "name": "DMM TV の案件", "status": "todo", "note": "1件 1,539円。記事の公開とサイト登録のあとに提携申請", "url": "https://af.moshimo.com/" },
+    { "name": "GitHub", "status": "done", "note": "anime-no-tonari（作ったものを全部保存）", "url": "https://github.com/nanosendtaniuchi-collab/anime-no-tonari" },
+    { "name": "Claude と GitHub の連携", "status": "done", "note": "つながり済み。記事の更新は Claude が行う" },
+    { "name": "サイト公開（GitHub Pages）", "status": "done", "note": "公開中", "url": "https://nanosendtaniuchi-collab.github.io/anime-no-tonari/" },
+    { "name": "お問い合わせ用メール", "status": "wait", "note": "フィリピンでSMSが届かないため、帰ってから作成" }
+  ],
+  "tasks": [
+    { "title": "チーム（AI社員6人）を作る", "status": "done" },
+    { "title": "キーワード・案件を調べる", "status": "done" },
+    { "title": "1本目の記事の下書きを作る", "status": "done" },
+    { "title": "サイトを作って公開する", "status": "done" },
+    { "title": "お問い合わせ用のメールを作る", "status": "wait", "who": "あなた", "detail": "作れたらアドレスを Claude に伝える" },
+    { "title": "記事の体験談を書く（6か所）", "status": "todo", "who": "あなた", "detail": "箇条書きで Claude に送れば、文章に整えて入れてもらえる" },
+    { "title": "記事の【要確認】を公式サイトで確かめる", "status": "todo", "who": "あなた", "detail": "料金・作品数・無料期間など" },
+    { "title": "1本目の記事を公開する", "status": "todo", "who": "Claude", "detail": "体験談と確認が終わったら" },
+    { "title": "もしもアフィリエイトにサイトを登録する", "status": "todo", "who": "あなた" },
+    { "title": "DMM TV の案件に提携申請する", "status": "todo", "who": "あなた", "detail": "承認されたら広告リンクを Claude に渡す" }
+  ],
+  "members": [
+    { "id": "keyword-researcher", "name": "リサーチ", "en": "KEYWORD", "icon": "🔍", "color": "#e3f1ff", "job": "売れるキーワードを探す", "detail": "検索する人の目的を読み取り、個人のサイトでも上位を狙えて、申し込みにつながるキーワードを選びます。", "ask": "「○○ジャンルで狙えるキーワードを調べて」" },
+    { "id": "program-scout", "name": "案件選び", "en": "PROGRAM", "icon": "💴", "color": "#fff0d9", "job": "ASP案件の報酬・条件を比べる", "detail": "もしもアフィリエイトなどから、紹介できる案件の報酬・成果条件・禁止事項を調べて比べます。", "ask": "「○○の記事で紹介できる案件を探して」" },
+    { "id": "content-writer", "name": "ライター", "en": "WRITER", "icon": "✍️", "color": "#ffe5ee", "job": "比較・レビュー記事を書く", "detail": "調べた結果をもとに、読者の悩みに答える記事を書きます。冒頭の広告表記も必ず入れます。", "ask": "「このキーワードで記事を書いて」" },
+    { "id": "seo-editor", "name": "SEO編集", "en": "SEO EDITOR", "icon": "📈", "color": "#efe9ff", "job": "タイトル・見出しを整える、リライト", "detail": "検索で見つけてもらいやすいタイトルや見出しに整え、成果が出ない記事を書き直します。", "ask": "「この記事のタイトルを改善して」" },
+    { "id": "compliance-checker", "name": "法務チェック", "en": "COMPLIANCE", "icon": "⚖️", "color": "#e1f6ee", "job": "ステマ規制・景品表示法の確認", "detail": "公開前に、法律やASPの規約に引っかかる表現がないかを確認します（最終判断は運営者）。", "ask": "「この記事を公開前にチェックして」" },
+    { "id": "analytics-analyst", "name": "アナリスト", "en": "ANALYTICS", "icon": "📊", "color": "#ffe9e2", "job": "成果データを分析する", "detail": "ASPの成果や検索のデータ（CSV）を読んで、どの記事を直せば売上が伸びるかを教えます。", "ask": "「今月の成果を分析して」" }
+  ]
+}

@@ -151,7 +151,33 @@ if (!withDrafts) {
   fs.writeFileSync(path.join(DIST, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${SITE_ORIGIN}${url(u)}</loc></url>`).join("\n")}\n</urlset>\n`);
   fs.writeFileSync(path.join(DIST, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${SITE_ORIGIN}${url("/sitemap.xml")}\n`);
 }
-fs.writeFileSync(path.join(DIST, "404.html"), layout({ title: "ページが見つかりません", canonical: "/404", body: '<article class="post"><h1>ページが見つかりません</h1><p><a href="${url("/")}">トップページへ戻る</a></p></article>' }));
+fs.writeFileSync(path.join(DIST, "404.html"), layout({ title: "ページが見つかりません", canonical: "/404", body: `<article class="post"><h1>ページが見つかりません</h1><p><a href="${url("/")}">トップページへ戻る</a></p></article>` }));
+
+// 運営ダッシュボード（検索エンジンには載せない。記事の状態はファイルから自動で集計する）
+const allArticles = [];
+for (const dir of ["published", "drafts"]) {
+  const full = path.join(ARTICLES, dir);
+  if (!fs.existsSync(full)) continue;
+  for (const f of fs.readdirSync(full).filter((f) => f.endsWith(".md"))) {
+    const slug = f.replace(/\.md$/, "");
+    const { data, body } = parseFrontmatter(fs.readFileSync(path.join(full, f), "utf8"));
+    const visible = body.replace(/<!--[\s\S]*?-->/g, "");
+    const affNames = [...new Set([...visible.matchAll(/\[\[AFF:(.+?)\]\]/g)].map((m) => m[1]))];
+    allArticles.push({
+      slug, title: data.title || slug, keyword: data.keyword || "", updated: data.updated || "",
+      published: dir === "published",
+      url: dir === "published" ? SITE_ORIGIN + url(`/${slug}/`) : "",
+      chars: visible.replace(/\s/g, "").length,
+      needCheck: visible.split("【要確認】").length - 1,
+      needStory: visible.split("【要追記").length - 1,
+      links: affNames.map((n) => ({ name: n, ready: !!resolveAffiliate(n) })),
+    });
+  }
+}
+fs.mkdirSync(path.join(DIST, "dashboard"), { recursive: true });
+const dashData = { ...JSON.parse(fs.readFileSync(path.join(ROOT, "dashboard", "status.json"), "utf8")), articles: allArticles, siteUrl: SITE_ORIGIN + url("/"), siteName: config.siteName };
+fs.writeFileSync(path.join(DIST, "dashboard", "index.html"), fs.readFileSync(path.join(ROOT, "dashboard", "index.html"), "utf8").replace("__DATA__", () => JSON.stringify(dashData).replace(/</g, "\\u003c")));
+fs.copyFileSync(path.join(ROOT, "dashboard", "icon.png"), path.join(DIST, "dashboard", "icon.png"));
 
 console.log(`${posts.length} 記事をビルドしました（${withDrafts ? "下書き込みプレビュー" : "本番"}）→ dist/`);
 if (warnings.length) console.log("\n公開前に確認:\n" + [...new Set(warnings)].map((w) => "  - " + w).join("\n"));

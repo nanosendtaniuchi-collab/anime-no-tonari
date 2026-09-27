@@ -48,3 +48,5 @@
 - ビルド結果の「公開前に確認」に出る警告（【要確認】の残り、リンク未設定など）は、公開前に解消する
 - main ブランチに push すると GitHub Actions（`.github/workflows/deploy.yml`）で GitHub Pages に公開される
 - 記事を公開するときは `articles/drafts/` から `articles/published/` へ移動する（運営者の承認後）
+- 運営ダッシュボード：`/dashboard/`（検索エンジンには載せない）。タスクと登録状況は `site/dashboard/status.json` を編集して更新する。記事の状態（下書き・要確認の数・リンク設定）はビルド時に自動で集計される
+  - 作業が進んだら status.json の該当項目の status（done / todo / wait）と updated を更新して push する
