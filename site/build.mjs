@@ -131,7 +131,7 @@ posts.sort((a, b) => (b.updated || "").localeCompare(a.updated || ""));
 const list = posts.length
   ? posts.map((p) => `<li class="card"><a href="${url(`/${p.slug}/`)}"><h2>${p.draft ? '<span class="draft">下書き</span>' : ""}${esc(p.title)}</h2><p>${esc(p.description)}</p><time>${esc(p.updated)}</time></a></li>`).join("\n")
   : "<p>記事を準備中です。</p>";
-write("", layout({ title: config.siteName, description: config.tagline, canonical: "/", body: `<section class="intro"><h1>${esc(config.siteName)}</h1><p>${esc(config.tagline)}。料金・作品数・無料期間を比べて、あなたに合うサービスを探すお手伝いをします。</p></section><h2 class="section-title">新着記事</h2><ul class="cards">${list}</ul>` }));
+write("", layout({ title: config.siteName, description: config.tagline, canonical: "/", body: `<section class="intro"><h1>${esc(config.siteName)}</h1><p>${esc(config.tagline)}です。動画配信サービスの比べ方から、原作やグッズの楽しみ方まで紹介します。</p></section><h2 class="section-title">新着記事</h2><ul class="cards">${list}</ul>` }));
 
 // 固定ページ（pages/*.md。{{siteName}} などは設定値に置き換え）
 for (const f of fs.readdirSync(path.join(ROOT, "pages")).filter((f) => f.endsWith(".md"))) {
